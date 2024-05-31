@@ -11,7 +11,7 @@ def checkResponse(response: list, latinName: str) -> bool:
         return False
     return True
 
-def getTaxanomy(taxa: pynat.Taxon) -> list:
+def getTaxanomy(taxa: pynat.Taxon, session: pynat.ClientSession) -> list:
     """
     Get the taxanomy of the animal
     """
@@ -19,14 +19,16 @@ def getTaxanomy(taxa: pynat.Taxon) -> list:
     taxanomy = []
     ancestor_ids = taxa.ancestor_ids
     for i in range(1, len(ancestor_ids)-1):
+        ancestorJSON = pynat.get_taxa_by_id(ancestor_ids[i], session = session)
+        ancestor = pynat.Taxon.from_json_list(ancestorJSON)
         try:
-            ancestorJSON = pynat.get_taxa_by_id(ancestor_ids[i])
-            ancestor = pynat.Taxon.from_json_list(ancestorJSON)
             title = ancestor[0].name
             taxanomy.append(title)
         except:
             print("Error in getting taxanomy")
-            taxanomy.append(None)
+            print(ancestor)
+            print(ancestor_ids[i])
+            taxanomy.append("")
     return taxanomy
 
 
@@ -35,12 +37,15 @@ def retrieveColloquialName(df: pd.DataFrame) -> None:
     Retrieve the colloquial names of the animals in the dataframe
     """
 
-    i = 4700           # use i =
+    # Change rate limit
+    session = pynat.ClientSession(per_minute = 100, per_day = 50000)
+
+    i = 7500           # use i =
     while i < 10000:
         latinName = df.loc[i, "Latin Names"]
 
         # Retrieve the taxa
-        response = pynat.get_taxa(q=latinName, rank = ["species"])
+        response = pynat.get_taxa(q=latinName, rank = ["species"], session = session)
         taxa = pynat.Taxon.from_json_list(response)
 
         # Check if there is a response
@@ -50,7 +55,7 @@ def retrieveColloquialName(df: pd.DataFrame) -> None:
             # Update the dataframe with the colloquial name
             df.loc[i, "Colloquial Names"] = colloquialName
 
-            taxanomy = getTaxanomy(taxa[0])
+            taxanomy = getTaxanomy(taxa[0], session)
             strTaxanomy = ",".join(taxanomy)
             df.loc[i, "Taxanomy"] = strTaxanomy
         else:
