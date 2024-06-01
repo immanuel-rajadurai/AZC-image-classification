@@ -40,7 +40,7 @@ def retrieveColloquialName(df: pd.DataFrame) -> None:
     # Change rate limit
     session = pynat.ClientSession(per_minute = 100, per_day = 50000)
 
-    i = 7500           # use i =
+    i = 9300           # use i =
     while i < 10000:
         latinName = df.loc[i, "Latin Names"]
 
