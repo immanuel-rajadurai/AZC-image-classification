@@ -26,7 +26,7 @@ def download_and_resize_image(url, save_dir, obs_id, max_size=(256, 256)):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         img = Image.open(BytesIO(response.content))
-        img.thumbnail(max_size)
+        img = img.resize(max_size)  # Resize image to the exact specified size
 
         # Ensure the save directory exists
         os.makedirs(save_dir, exist_ok=True)
