@@ -31,27 +31,17 @@ class AnimalPipeline:
             print(f"No Latin name found for '{colloquial_name}' in the dataset.")
             return None
 
-    def get_latin_names(self, colloquial_names):
-        """ Get a list of Latin names for the given list of colloquial names. """
-        latin_names = []
-        for name in colloquial_names:
-            latin_name = self.get_latin_name(name)
-            if latin_name:
-                latin_names.append(latin_name)
-        return latin_names
+    def check_latin_name(self, latin_name):
+        """ Check if a Latin name exists in the dataset. """
+        sanitized_name = self.sanitize_name(latin_name)
+        exists = not self.dataset[self.dataset['Latin Name'] == sanitized_name].empty
+        return exists
 
 
-file_path = ".\\data\\animal_latin_colloquial.csv"
-pipeline = AnimalPipeline(file_path)
+if __name__ == "__main__":
+    file_path = ".\\data\\animal_latin_colloquial.csv"
+    pipeline = AnimalPipeline(file_path)
 
-  
-input_list = ["Oak Spider", "Lion"]
-
-    
-
-   
-output_list = pipeline.get_latin_names(input_list)
-
-    
-print(output_list)
-
+    input_list = ["Oak Spider", "Lion"]
+    output_list = pipeline.get_latin_names(input_list)
+    print(output_list)
