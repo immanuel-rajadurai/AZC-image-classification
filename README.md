@@ -1,6 +1,6 @@
 # AZC-image-classification
 
-The production codebase for AZC's flagship image classification AI used to power the zoo of tommorow.
+The production codebase for AZC's flagship image classification AI used to power the zoos and safari park businesses of tommorow.
 - **Data Sources:** iNaturalist, PyiNaturalist API
 - **Models:** ResNet50, VGG16, InceptionV3, EfficientNetB0
 
